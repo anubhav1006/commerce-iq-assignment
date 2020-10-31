@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.commerceiq.recruitment.entities.Posts;
 import com.commerceiq.recruitment.exceptions.ResourceNotFoundException;
+import com.commerceiq.recruitment.response.Response;
 import com.commerceiq.recruitment.service.StoreService;
 
 @RestController
@@ -45,8 +46,10 @@ public class PostsController {
   }
 
   @PostMapping("/posts")
-  public Posts createPosts(@RequestBody Posts post) {
-    return service.addPost(post);
+  public Response createPosts(@RequestBody Posts post) {
+    String message = post.getId() != null ? "id was not used while creating entry, " +
+      "an auto increment id was used instead!" : "";
+    return new Response(200, message, service.addPost(post));
   }
 
   @PutMapping("/posts/{id}")

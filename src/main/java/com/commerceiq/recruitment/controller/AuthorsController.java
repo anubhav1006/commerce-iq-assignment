@@ -19,6 +19,7 @@ package com.commerceiq.recruitment.controller;
 
   import com.commerceiq.recruitment.entities.Authors;
   import com.commerceiq.recruitment.exceptions.ResourceNotFoundException;
+  import com.commerceiq.recruitment.response.Response;
   import com.commerceiq.recruitment.service.StoreService;
 
 @RestController
@@ -44,8 +45,10 @@ public class AuthorsController {
   }
 
   @PostMapping("/authors")
-  public Authors createAuthor(@RequestBody Authors author) {
-    return service.addAuthor(author);
+  public Response createAuthor(@RequestBody Authors author) {
+    String message = author.getId() != null ? "id was not used while creating entry, " +
+      " an auto increment id was used instead!" : "";
+    return new Response(200, message,service.addAuthor(author));
   }
 
   @PutMapping("/authors/{id}")

@@ -94,6 +94,7 @@ public class StoreRepository {
 
   public Authors addAuthor(Authors author) {
     List<Authors> authors = getAllAuthors();
+    author.setId((long) authors.size()*2);
     authors.add(author);
     JSONObject obj = readJsonData();
     obj.replace("authors", authors);
@@ -103,6 +104,7 @@ public class StoreRepository {
 
   public Posts addPost(Posts post) {
     List<Posts> posts = getAllPosts();
+    post.setId((long) posts.size()*2);
     posts.add(post);
     JSONObject obj = readJsonData();
     obj.replace("posts", posts);
