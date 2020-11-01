@@ -33,8 +33,9 @@ public class AuthorsController {
   public List<Authors> getAllAuthors(@RequestParam(name = "firstName", required = false) String firstName,
                                      @RequestParam(name = "lastName", required = false) String lastName,
                                      @RequestParam(name = "_sort", required = false) String sortBy,
-                                     @RequestParam(name = "_order", required = false) String orderBy) {
-    return service.getAllAuthors(firstName, lastName, sortBy, orderBy);
+                                     @RequestParam(name = "_order", required = false) String orderBy,
+                                     @RequestParam(name = "_q", required = false) String query) {
+    return service.getAllAuthors(firstName, lastName, sortBy, orderBy, query);
   }
 
   @GetMapping("/authors/{id}")
@@ -71,6 +72,11 @@ public class AuthorsController {
   public ResponseEntity<Authors> patchAuthors(@PathVariable(value = "id") Long id,
                                           @RequestBody Map<String, String> body) throws ResourceNotFoundException {
     return ResponseEntity.ok(service.patchAuthor(id, body));
+  }
+
+  @GetMapping("/authors/search")
+  public List<Authors> getSearchedAuthors(@RequestParam(name = "_q", required = false) String query) {
+    return service.searchAuthors(query);
   }
 
 }

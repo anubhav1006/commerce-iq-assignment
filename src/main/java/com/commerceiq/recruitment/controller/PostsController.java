@@ -30,12 +30,12 @@ public class PostsController {
   StoreService service;
 
   @GetMapping("/posts")
-  public List<Posts> getAllPosts(@RequestParam(name = "title", required = false) String title,
-                                 @RequestParam(name = "author", required = false) String author,
-                                 @RequestParam(name = "_sort", required = false) String sortBy,
-                                 @RequestParam(name = "_order", required = false) String orderBy
-                                 ) {
-    return service.getAllPosts(title, author, sortBy, orderBy);
+  public List<Posts> getAllPosts(@RequestParam(value = "title", required = false) String title,
+                                 @RequestParam(value = "author", required = false) String author,
+                                 @RequestParam(value = "_sort", required = false) String sortBy,
+                                 @RequestParam(value = "_order", required = false) String orderBy,
+                                 @RequestParam(value = "_q", required = false) String query) {
+    return service.getAllPosts(title, author, sortBy, orderBy, query);
   }
 
   @GetMapping("/posts/{id}")
@@ -73,5 +73,11 @@ public class PostsController {
                                            @RequestBody Map<String, String> body) throws ResourceNotFoundException {
     return ResponseEntity.ok(service.patchPost(id, body));
   }
+
+  @GetMapping("/posts/search")
+  public List<Posts> getSearchedPosts( @RequestParam(name = "_q", required = false) String query) {
+    return service.searchPosts(query);
+  }
+
 
 }

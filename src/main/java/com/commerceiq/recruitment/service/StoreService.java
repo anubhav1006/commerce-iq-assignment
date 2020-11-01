@@ -22,8 +22,13 @@ public class StoreService implements IStoreService {
   StoreRepository repository;
 
   @Override
-  public List<Posts> getAllPosts(String title, String author, String sortBy, String orderBy) {
+  public List<Posts> getAllPosts(String title, String author, String sortBy, String orderBy, String query) {
     List<Posts> posts = repository.getAllPosts();
+
+    if(query != null && !query.equals("")){
+      posts = posts.stream().filter(postIt -> postIt.getTitle().contains(query) || postIt.getAuthor().contains(query)).
+        collect(Collectors.toList());
+    }
     if(title != null && !title.equals("")){
       posts = posts.stream().filter(postIt -> postIt.getTitle().contains(title)).collect(Collectors.toList());
     }
@@ -35,18 +40,18 @@ public class StoreService implements IStoreService {
         case "views" :
           if(orderBy != null && !orderBy.equals("")) {
             if(orderBy.equals("asc")){
-              Collections.sort(posts, Comparator.comparingInt(Posts::getViews));
+              posts.sort(Comparator.comparingInt(Posts::getViews));
             }else {
-              Collections.sort(posts, Comparator.comparingInt(Posts::getViews).reversed());
+              posts.sort(Comparator.comparingInt(Posts::getViews).reversed());
             }
           }
           break;
         case "reviews" :
           if(orderBy != null && !orderBy.equals("")) {
             if(orderBy.equals("asc")){
-              Collections.sort(posts, Comparator.comparingInt(Posts::getReviews));
+              posts.sort(Comparator.comparingInt(Posts::getReviews));
             }else {
-              Collections.sort(posts, Comparator.comparingInt(Posts::getReviews).reversed());
+              posts.sort(Comparator.comparingInt(Posts::getReviews).reversed());
             }
           }
           break;
@@ -54,27 +59,27 @@ public class StoreService implements IStoreService {
         case "title" :
           if(orderBy != null && !orderBy.equals("")) {
             if(!orderBy.equals("desc")){
-              Collections.sort(posts, Comparator.comparing(Posts::getTitle));
+              posts.sort(Comparator.comparing(Posts::getTitle));
             }else {
-              Collections.sort(posts, Comparator.comparing(Posts::getTitle).reversed());
+              posts.sort(Comparator.comparing(Posts::getTitle).reversed());
             }
           }
 
         case "author" :
           if(orderBy != null && !orderBy.equals("")) {
             if(!orderBy.equals("desc")){
-              Collections.sort(posts, Comparator.comparing(Posts::getAuthor));
+              posts.sort(Comparator.comparing(Posts::getAuthor));
             }else {
-              Collections.sort(posts, Comparator.comparing(Posts::getAuthor).reversed());
+              posts.sort(Comparator.comparing(Posts::getAuthor).reversed());
             }
           }
           break;
         default:
           if(orderBy != null && !orderBy.equals("")) {
             if(!orderBy.equals("desc")){
-              Collections.sort(posts, Comparator.comparingLong(Posts::getId));
+              posts.sort(Comparator.comparingLong(Posts::getId));
             }else {
-              Collections.sort(posts, Comparator.comparingLong(Posts::getId).reversed());
+              posts.sort(Comparator.comparingLong(Posts::getId).reversed());
             }
           }
       }
@@ -84,9 +89,13 @@ public class StoreService implements IStoreService {
   }
 
   @Override
-  public List<Authors> getAllAuthors(String firstName, String lastName, String sortBy, String orderBy) {
+  public List<Authors> getAllAuthors(String firstName, String lastName, String sortBy, String orderBy, String query) {
     List<Authors> authors =  repository.getAllAuthors();
 
+    if(query != null && !query.equals("")){
+      authors = authors.stream().filter(authorIt -> authorIt.getFirstName().contains(query) ||
+        authorIt.getLastName().contains(query)).collect(Collectors.toList());
+    }
     if(firstName != null && !firstName.equals("")){
       authors = authors.stream().filter(authorIt -> authorIt.getFirstName().contains(firstName)).
         collect(Collectors.toList());
@@ -100,37 +109,39 @@ public class StoreService implements IStoreService {
         case "posts" :
           if(orderBy != null && !orderBy.equals("")) {
             if(orderBy.equals("asc")){
-              Collections.sort(authors, Comparator.comparingInt(Authors::getPosts));
+              authors.sort(Comparator.comparingInt(Authors::getPosts));
             }else {
-              Collections.sort(authors, Comparator.comparingInt(Authors::getPosts).reversed());
+              authors.sort(Comparator.comparingInt(Authors::getPosts).reversed());
             }
           }
           break;
         case "firstName" :
           if(orderBy != null && !orderBy.equals("")) {
             if(!orderBy.equals("desc")){
-              Collections.sort(authors, Comparator.comparing(Authors::getFirstName));
+              authors.sort(Comparator.comparing(Authors::getFirstName));
             }else {
-              Collections.sort(authors, Comparator.comparing(Authors::getFirstName).reversed());
+              authors.sort(Comparator.comparing(Authors::getFirstName).reversed());
             }
           }
 
         case "lastName" :
           if(orderBy != null && !orderBy.equals("")) {
             if(!orderBy.equals("desc")){
-              Collections.sort(authors, Comparator.comparing(Authors::getLastName));
+              authors.sort(Comparator.comparing(Authors::getLastName));
             }else {
-              Collections.sort(authors, Comparator.comparing(Authors::getLastName).reversed());
+              authors.sort(Comparator.comparing(Authors::getLastName).reversed());
             }
           }
           break;
         default:
           if(orderBy != null && !orderBy.equals("")) {
             if(!orderBy.equals("desc")){
-              Collections.sort(authors, Comparator.comparingLong(Authors::getId));
-            }else {
-              Collections.sort(authors, Comparator.comparingLong(Authors::getId).reversed());
+              authors.sort(Comparator.comparingLong(Authors::getId));
+            } else {
+              authors.sort(Comparator.comparingLong(Authors::getId).reversed());
             }
+          } else {
+            authors.sort(Comparator.comparingLong(Authors::getId));
           }
       }
     }
@@ -155,13 +166,23 @@ public class StoreService implements IStoreService {
   @Override
   public Posts addPost(Posts post) {
     Posts newPost = repository.addPost(post);
-    String authorFirstName = post.getAuthor().split(" ")[0];
-//    Check exception here
-    String authorLastName = post.getAuthor().split(" ")[1];
-    if(!checkAuthorExist(authorFirstName, authorLastName)){
-      addAuthor(new Authors(authorFirstName, authorLastName));
-    }
+    updateAuthor(post);
     return newPost;
+  }
+
+  private void updateAuthor(Posts post) {
+    String authorFirstName="";
+    String authorLastName="";
+    try {
+       authorFirstName = post.getAuthor().split(" ")[0];
+
+      authorLastName = post.getAuthor().split(" ")[1];
+      if(!checkAuthorExist(authorFirstName, authorLastName)){
+        addAuthor(new Authors(authorFirstName, authorLastName));
+      }
+    } catch (Exception e){
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -171,6 +192,7 @@ public class StoreService implements IStoreService {
 
   @Override
   public Posts editPost(Long id, Posts post) throws ResourceNotFoundException {
+    updateAuthor(post);
     return repository.editPost(id, post);
   }
 

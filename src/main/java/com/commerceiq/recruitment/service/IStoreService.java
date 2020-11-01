@@ -14,13 +14,15 @@ public interface IStoreService {
 
   /*
   * Get list of all posts from Json file
+  * Sort and filter option available
+  * Query option available
   * */
-  List<Posts> getAllPosts(String title, String author, String sortBy, String orderBy);
+  List<Posts> getAllPosts(String query, String title, String author, String sortBy, String orderBy);
 
   /*
    * Get list of all authors from Json file
    * */
-  List<Authors> getAllAuthors(String firstName, String lastName, String sortBy, String orderBy);
+  List<Authors> getAllAuthors(String query, String firstName, String lastName, String sortBy, String orderBy);
 
   /*
    * Get post based on id from Json file

@@ -1,0 +1,83 @@
+{
+      "posts": [
+          {
+              "additionalInformation": {},
+              "reviews": 11,
+              "author": "Anubhav Jha",
+              "id": 0,
+              "title": "Beta",
+              "views": 22
+          },
+          {
+              "additionalInformation": {},
+              "reviews": 11,
+              "author": "ANubhav",
+              "id": 2,
+              "title": "Mobile",
+              "views": 22
+          },
+          {
+              "additionalInformation": {
+                  "firstName": "Albert",
+                  "lastName": "Einstein",
+                  "posts": "1"
+              },
+              "reviews": 0,
+              "id": 4,
+              "views": 0
+          },
+          {
+              "additionalInformation": {
+                  "firstName": "Albert",
+                  "lastName": "Einstein",
+                  "posts": "1"
+              },
+              "reviews": 0,
+              "id": 6,
+              "views": 0
+          },
+          {
+              "additionalInformation": {
+                  "firstName": "Albert",
+                  "lastName": "Einstein",
+                  "posts": "1"
+              },
+              "reviews": 0,
+              "id": 8,
+              "views": 0
+          },
+          {
+              "additionalInformation": {
+                  "firstName": "Albert",
+                  "lastName": "Einstein",
+                  "posts": "1"
+              },
+              "reviews": 0,
+              "id": 10,
+              "views": 0
+          }
+      ],
+      "authors": [
+          {
+              "additionalInformation": {},
+              "firstName": "Anubhav",
+              "lastName": "Jha",
+              "id": 0,
+              "posts": 1
+          },
+          {
+              "additionalInformation": {},
+              "firstName": "Albert",
+              "lastName": "Einstein",
+              "id": 4,
+              "posts": 1
+          },
+          {
+              "additionalInformation": {},
+              "firstName": "APlha",
+              "lastName": "Btea",
+              "id": 2,
+              "posts": 4
+          }
+      ]
+  }

@@ -1,34 +1,30 @@
 package com.commerceiq.recruitment.repository;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
+
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.springframework.stereotype.Repository;
 
 import com.commerceiq.recruitment.entities.Authors;
 import com.commerceiq.recruitment.entities.Posts;
 import com.commerceiq.recruitment.exceptions.ResourceNotFoundException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Repository
 public class StoreRepository {
 
   private static final String STORE = "store.json";
@@ -37,41 +33,53 @@ public class StoreRepository {
   JSONObject readJsonData() {
     JSONObject obj = new JSONObject();
     try {
-      obj = objectMapper.readValue(new FileReader(STORE), JSONObject.class);
-    } catch (JsonParseException | JsonMappingException e) {
-      e.printStackTrace();
-    } catch (IOException fe) {
+      InputStream is = new FileInputStream(STORE);
+      JSONTokener token = new JSONTokener(is);
+      obj = new JSONObject(token);
+    }  catch (IOException fe) {
       fe.printStackTrace();
       Path newFilePath = Paths.get(STORE);
       try {
         Files.createFile(newFilePath);
-      } catch (IOException e) {
+      } catch (Exception e) {
         e.printStackTrace();
+        return new JSONObject();
       }
+    } catch (Exception e){
+      e.printStackTrace();
+      return new JSONObject();
     }
     return obj;
   }
 
   public List<Posts> getAllPosts() {
     JSONObject obj = readJsonData();
-    JSONArray postsArray = (JSONArray) obj.get("posts");
+    List<Posts> posts;
     try {
-      return Arrays.asList(objectMapper.readValue(postsArray.toJSONString(), Posts[].class));
-    } catch (JsonProcessingException e) {
+      JSONArray postsArray = obj.getJSONArray("posts");
+      if(postsArray == null)
+        return new ArrayList<>();
+      posts =  objectMapper.readValue(postsArray.toString(), new TypeReference<List<Posts>>() {});
+    } catch (Exception e) {
       e.printStackTrace();
       return new ArrayList<>();
     }
+    return posts;
   }
 
   public List<Authors> getAllAuthors() {
+    List<Authors> list;
     JSONObject obj = readJsonData();
-    JSONArray postsArray = (JSONArray) obj.get("authors");
     try {
-      return Arrays.asList(objectMapper.readValue(postsArray.toJSONString(), Authors[].class));
-    } catch (JsonProcessingException e) {
+      JSONArray authorsArray = obj.getJSONArray("authors");
+      if(authorsArray == null)
+        return new ArrayList<>();
+      list =  objectMapper.readValue(authorsArray.toString(), new TypeReference<List<Authors>>() {});
+    } catch (Exception e) {
       e.printStackTrace();
       return new ArrayList<>();
     }
+    return list;
   }
 
   public Posts getPost(long id) throws ResourceNotFoundException {
@@ -97,7 +105,7 @@ public class StoreRepository {
     author.setId((long) authors.size()*2);
     authors.add(author);
     JSONObject obj = readJsonData();
-    obj.replace("authors", authors);
+    obj.put("authors", authors);
     writeJsonData(obj);
     return author;
   }
@@ -107,19 +115,20 @@ public class StoreRepository {
     post.setId((long) posts.size()*2);
     posts.add(post);
     JSONObject obj = readJsonData();
-    obj.replace("posts", posts);
+    obj.put("posts", posts);
     writeJsonData(obj);
     return post;
   }
 
   public Posts editPost(Long id, Posts post) throws ResourceNotFoundException {
+    post.setId(id);
     List<Posts> posts = getAllPosts();
     for(Posts postIt: posts){
-      if(postIt.getId() == id) {
+      if(Objects.equals(postIt.getId(), id)) {
         posts.remove(postIt);
         posts.add(post);
         JSONObject obj = readJsonData();
-        obj.replace("posts", posts);
+        obj.put("posts", posts);
         writeJsonData(obj);
         return post;
       }
@@ -128,13 +137,14 @@ public class StoreRepository {
   }
 
   public Authors editAuthor(Long id, Authors author) throws ResourceNotFoundException {
+    author.setId(id);
     List<Authors> authors = getAllAuthors();
     for(Authors authorIt: authors){
-      if(authorIt.getId() == id) {
+      if(Objects.equals(authorIt.getId(), id)) {
         authors.remove(authorIt);
         authors.add(author);
         JSONObject obj = readJsonData();
-        obj.replace("authors", authors);
+        obj.put("authors", authors);
         writeJsonData(obj);
         return author;
       }
@@ -145,13 +155,13 @@ public class StoreRepository {
   public Posts patchPost(Long id, Map<String, String> values) throws ResourceNotFoundException {
     List<Posts> posts = getAllPosts();
     for(Posts postIt: posts){
-      if(postIt.getId() == id) {
+      if(Objects.equals(postIt.getId(), id)) {
         Posts newPost = replacePost(postIt, values);
         newPost.setId(id);
         posts.remove(postIt);
         posts.add(newPost);
         JSONObject obj = readJsonData();
-        obj.replace("posts", posts);
+        obj.put("posts", posts);
         writeJsonData(obj);
         return newPost;
       }
@@ -162,13 +172,13 @@ public class StoreRepository {
   public Authors patchAuthor(Long id, Map<String, String> values) throws ResourceNotFoundException {
     List<Authors> authors = getAllAuthors();
     for(Authors authorIt: authors){
-      if(authorIt.getId() == id) {
+      if(Objects.equals(authorIt.getId(), id)) {
         Authors newAuthor = replaceAuthor(authorIt, values);
         newAuthor.setId(id);
         authors.remove(authorIt);
         authors.add(newAuthor);
         JSONObject obj = readJsonData();
-        obj.replace("authors", authors);
+        obj.put("authors", authors);
         writeJsonData(obj);
         return newAuthor;
       }
@@ -187,6 +197,7 @@ public class StoreRepository {
         break;
         case "reviews" : post.setReviews(Integer.parseInt(values.get(key)));
         break;
+        case "id" : break;
         default:
             post.getAdditionalInformation().put(key, values.get(key));
       }
@@ -203,6 +214,7 @@ public class StoreRepository {
           break;
         case "posts" : author.setPosts(Integer.parseInt(values.get(key)));
           break;
+        case "id" : break;
         default:
           author.getAdditionalInformation().put(key, values.get(key));
       }
@@ -215,10 +227,10 @@ public class StoreRepository {
   public boolean deletePost(Long id) {
     List<Posts> posts = getAllPosts();
     for(Posts it : posts) {
-      if(it.getId() == id){
+      if(Objects.equals(it.getId(), id)){
         posts.remove(it);
         JSONObject obj = readJsonData();
-        obj.replace("posts", posts);
+        obj.put("posts", posts);
         writeJsonData(obj);
         return true;
       }
@@ -229,10 +241,10 @@ public class StoreRepository {
   public boolean deleteAuthor(Long id) {
     List<Authors> authors = getAllAuthors();
     for(Authors it : authors) {
-      if(it.getId() == id){
+      if(it.getId().equals(id)){
         authors.remove(it);
         JSONObject obj = readJsonData();
-        obj.replace("authors", authors);
+        obj.put("authors", authors);
         writeJsonData(obj);
         return true;
       }
@@ -245,11 +257,10 @@ public class StoreRepository {
     FileWriter file = null;
     try {
       file = new FileWriter(STORE);
-      file.write(object.toJSONString());
-    } catch (IOException e) {
+      object.write(file, 4, 2);
+    } catch (Exception e) {
       e.printStackTrace();
     } finally {
-
       try {
         if (file != null) {
           file.flush();
@@ -259,7 +270,6 @@ public class StoreRepository {
         e.printStackTrace();
       }
     }
-
   }
 
   public boolean checkAuthorExists(String firstName, String lastName) {
