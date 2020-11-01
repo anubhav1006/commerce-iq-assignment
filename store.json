@@ -9,14 +9,6 @@
               "views": 22
           },
           {
-              "additionalInformation": {},
-              "reviews": 11,
-              "author": "ANubhav",
-              "id": 2,
-              "title": "Mobile",
-              "views": 22
-          },
-          {
               "additionalInformation": {
                   "firstName": "Albert",
                   "lastName": "Einstein",
@@ -55,6 +47,14 @@
               "reviews": 0,
               "id": 10,
               "views": 0
+          },
+          {
+              "additionalInformation": {"additionalInformation": "{fatherName=General Einstein, No.Of sisters=5}"},
+              "reviews": 10,
+              "author": "ANubhav",
+              "id": 2,
+              "title": "Mobile",
+              "views": 20
           }
       ],
       "authors": [
@@ -66,18 +66,17 @@
               "posts": 1
           },
           {
-              "additionalInformation": {},
+              "additionalInformation": {
+                  "additionalInformation": "{fatherName=General Einstein, No.Of sisters=5}",
+                  "reviews": "10",
+                  "author": "Albert Einstein",
+                  "title": "Alpha",
+                  "views": "20"
+              },
               "firstName": "Albert",
               "lastName": "Einstein",
               "id": 4,
               "posts": 1
-          },
-          {
-              "additionalInformation": {},
-              "firstName": "APlha",
-              "lastName": "Btea",
-              "id": 2,
-              "posts": 4
           }
       ]
   }

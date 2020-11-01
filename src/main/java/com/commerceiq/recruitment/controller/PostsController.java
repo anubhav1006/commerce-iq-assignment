@@ -70,7 +70,7 @@ public class PostsController {
 
   @PatchMapping("/posts/{id}")
   public ResponseEntity<Posts> patchPosts(@PathVariable(value = "id") Long id,
-                                           @RequestBody Map<String, String> body) throws ResourceNotFoundException {
+                                           @RequestBody Map<String, ?> body) throws ResourceNotFoundException {
     return ResponseEntity.ok(service.patchPost(id, body));
   }
 

@@ -70,7 +70,7 @@ public class AuthorsController {
 
   @PatchMapping("/authors/{id}")
   public ResponseEntity<Authors> patchAuthors(@PathVariable(value = "id") Long id,
-                                          @RequestBody Map<String, String> body) throws ResourceNotFoundException {
+                                          @RequestBody Map<String, ?> body) throws ResourceNotFoundException {
     return ResponseEntity.ok(service.patchAuthor(id, body));
   }
 

@@ -1,6 +1,5 @@
 package com.commerceiq.recruitment.service;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +25,17 @@ public class StoreService implements IStoreService {
     List<Posts> posts = repository.getAllPosts();
 
     if(query != null && !query.equals("")){
-      posts = posts.stream().filter(postIt -> postIt.getTitle().contains(query) || postIt.getAuthor().contains(query)).
-        collect(Collectors.toList());
+        posts = posts.stream().filter(postIt -> (postIt.getTitle() != null && postIt.getTitle().contains(query)) ||
+          (postIt.getAuthor() != null && postIt.getAuthor().contains(query))).
+          collect(Collectors.toList());
     }
     if(title != null && !title.equals("")){
-      posts = posts.stream().filter(postIt -> postIt.getTitle().contains(title)).collect(Collectors.toList());
+      posts = posts.stream().filter(postIt -> (postIt.getTitle() != null && postIt.getTitle().contains(title)))
+        .collect(Collectors.toList());
     }
     if(author != null && !author.equals("")){
-      posts = posts.stream().filter(postIt -> postIt.getAuthor().contains(author)).collect(Collectors.toList());
+      posts = posts.stream().filter(postIt -> (postIt.getAuthor() != null && postIt.getAuthor().contains(author)))
+        .collect(Collectors.toList());
     }
     if(sortBy != null && !sortBy.equals("")){
       switch (sortBy) {
@@ -93,16 +95,17 @@ public class StoreService implements IStoreService {
     List<Authors> authors =  repository.getAllAuthors();
 
     if(query != null && !query.equals("")){
-      authors = authors.stream().filter(authorIt -> authorIt.getFirstName().contains(query) ||
-        authorIt.getLastName().contains(query)).collect(Collectors.toList());
+      authors = authors.stream().filter(authorIt -> (authorIt.getFirstName() != null && authorIt.getFirstName()
+        .contains(query)) || (authorIt.getLastName() != null && authorIt.getLastName().contains(query)))
+        .collect(Collectors.toList());
     }
     if(firstName != null && !firstName.equals("")){
-      authors = authors.stream().filter(authorIt -> authorIt.getFirstName().contains(firstName)).
-        collect(Collectors.toList());
+      authors = authors.stream().filter(authorIt -> (authorIt.getFirstName() != null && authorIt.getFirstName()
+        .contains(firstName))).collect(Collectors.toList());
     }
     if(lastName != null && !lastName.equals("")){
-      authors = authors.stream().filter(authorIt -> authorIt.getLastName().contains(lastName)).
-        collect(Collectors.toList());
+      authors = authors.stream().filter(authorIt ->(authorIt.getLastName() != null && authorIt.getLastName()
+        .contains(lastName))).collect(Collectors.toList());
     }
     if(sortBy != null && !sortBy.equals("")){
       switch (sortBy) {
@@ -202,12 +205,12 @@ public class StoreService implements IStoreService {
   }
 
   @Override
-  public Posts patchPost(Long id, Map<String, String> request) throws ResourceNotFoundException {
+  public Posts patchPost(Long id, Map<String, ?> request) throws ResourceNotFoundException {
     return repository.patchPost(id, request);
   }
 
   @Override
-  public Authors patchAuthor(Long id, Map<String, String> request) throws ResourceNotFoundException {
+  public Authors patchAuthor(Long id, Map<String, ?> request) throws ResourceNotFoundException {
     return repository.patchAuthor(id, request);
   }
 

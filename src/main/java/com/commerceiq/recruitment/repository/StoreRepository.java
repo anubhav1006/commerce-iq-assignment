@@ -152,7 +152,7 @@ public class StoreRepository {
     throw new ResourceNotFoundException("Author not found");
   }
 
-  public Posts patchPost(Long id, Map<String, String> values) throws ResourceNotFoundException {
+  public Posts patchPost(Long id, Map<String, ?> values) throws ResourceNotFoundException {
     List<Posts> posts = getAllPosts();
     for(Posts postIt: posts){
       if(Objects.equals(postIt.getId(), id)) {
@@ -169,7 +169,7 @@ public class StoreRepository {
     throw new ResourceNotFoundException("Post not found");
   }
 
-  public Authors patchAuthor(Long id, Map<String, String> values) throws ResourceNotFoundException {
+  public Authors patchAuthor(Long id, Map<String, ?> values) throws ResourceNotFoundException {
     List<Authors> authors = getAllAuthors();
     for(Authors authorIt: authors){
       if(Objects.equals(authorIt.getId(), id)) {
@@ -186,37 +186,37 @@ public class StoreRepository {
     throw new ResourceNotFoundException("Author not found");
   }
 
-  private Posts replacePost (Posts post, Map<String, String> values) throws NumberFormatException{
+  private Posts replacePost (Posts post, Map<String, ?> values) throws NumberFormatException{
     for(String key: values.keySet()){
       switch(key) {
-        case "title" : post.setTitle(values.get(key));
+        case "title" : post.setTitle(String.valueOf(values.get(key)));
         break;
-        case "author" : post.setAuthor(values.get(key));
+        case "author" : post.setAuthor(String.valueOf(values.get(key)));
         break;
-        case "views" : post.setViews(Integer.parseInt(values.get(key)));
+        case "views" : post.setViews(Integer.parseInt(String.valueOf(values.get(key))));
         break;
-        case "reviews" : post.setReviews(Integer.parseInt(values.get(key)));
+        case "reviews" : post.setReviews(Integer.parseInt(String.valueOf(values.get(key))));
         break;
         case "id" : break;
         default:
-            post.getAdditionalInformation().put(key, values.get(key));
+            post.getAdditionalInformation().put(key, String.valueOf(values.get(key)));
       }
     }
     return post;
   }
 
-  private Authors replaceAuthor (Authors author, Map<String, String> values) throws NumberFormatException{
+  private Authors replaceAuthor (Authors author, Map<String, ?> values) throws NumberFormatException{
     for(String key: values.keySet()){
       switch(key) {
-        case "firstName" : author.setFirstName(values.get(key));
+        case "firstName" : author.setFirstName(String.valueOf(values.get(key)));
           break;
-        case "lastName" : author.setLastName(values.get(key));
+        case "lastName" : author.setLastName(String.valueOf(values.get(key)));
           break;
-        case "posts" : author.setPosts(Integer.parseInt(values.get(key)));
+        case "posts" : author.setPosts(Integer.parseInt(String.valueOf(values.get(key))));
           break;
         case "id" : break;
         default:
-          author.getAdditionalInformation().put(key, values.get(key));
+          author.getAdditionalInformation().put(key, String.valueOf(values.get(key)));
       }
     }
     return author;

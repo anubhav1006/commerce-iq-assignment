@@ -58,12 +58,12 @@ public interface IStoreService {
   /*
    * Patch a post in Json file
    * */
-  Posts patchPost(Long id, Map<String, String> request) throws ResourceNotFoundException;
+  Posts patchPost(Long id, Map<String, ?> request) throws ResourceNotFoundException;
 
   /*
    * Patch a author in Json file
    * */
-  Authors patchAuthor(Long id, Map<String, String> request) throws ResourceNotFoundException;
+  Authors patchAuthor(Long id, Map<String, ?> request) throws ResourceNotFoundException;
 
   /*
    * Delete a post from Json file
