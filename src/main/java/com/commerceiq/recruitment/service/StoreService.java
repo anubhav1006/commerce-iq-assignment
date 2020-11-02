@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.commerceiq.recruitment.constants.Constants;
 import com.commerceiq.recruitment.entities.Authors;
 import com.commerceiq.recruitment.entities.Posts;
 import com.commerceiq.recruitment.exceptions.ResourceNotFoundException;
@@ -24,33 +25,33 @@ public class StoreService implements IStoreService {
   public List<Posts> getAllPosts(String title, String author, String sortBy, String orderBy, String query) {
     List<Posts> posts = repository.getAllPosts();
 
-    if(query != null && !query.equals("")){
+    if(query != null && !query.equals(Constants.emptyString)){
         posts = posts.stream().filter(postIt -> (postIt.getTitle() != null && postIt.getTitle().contains(query)) ||
           (postIt.getAuthor() != null && postIt.getAuthor().contains(query))).
           collect(Collectors.toList());
     }
-    if(title != null && !title.equals("")){
+    if(title != null && !title.equals(Constants.emptyString)){
       posts = posts.stream().filter(postIt -> (postIt.getTitle() != null && postIt.getTitle().contains(title)))
         .collect(Collectors.toList());
     }
-    if(author != null && !author.equals("")){
+    if(author != null && !author.equals(Constants.emptyString)){
       posts = posts.stream().filter(postIt -> (postIt.getAuthor() != null && postIt.getAuthor().contains(author)))
         .collect(Collectors.toList());
     }
-    if(sortBy != null && !sortBy.equals("")){
+    if(sortBy != null && !sortBy.equals(Constants.emptyString)){
       switch (sortBy) {
-        case "views" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(orderBy.equals("asc")){
+        case Constants.views :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(orderBy.equals(Constants.asc)){
               posts.sort(Comparator.comparingInt(Posts::getViews));
             }else {
               posts.sort(Comparator.comparingInt(Posts::getViews).reversed());
             }
           }
           break;
-        case "reviews" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(orderBy.equals("asc")){
+        case Constants.reviews :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(orderBy.equals(Constants.asc)){
               posts.sort(Comparator.comparingInt(Posts::getReviews));
             }else {
               posts.sort(Comparator.comparingInt(Posts::getReviews).reversed());
@@ -58,18 +59,18 @@ public class StoreService implements IStoreService {
           }
           break;
 
-        case "title" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(!orderBy.equals("desc")){
+        case Constants.title :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(!orderBy.equals(Constants.desc)){
               posts.sort(Comparator.comparing(Posts::getTitle));
             }else {
               posts.sort(Comparator.comparing(Posts::getTitle).reversed());
             }
           }
 
-        case "author" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(!orderBy.equals("desc")){
+        case Constants.author :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(!orderBy.equals(Constants.desc)){
               posts.sort(Comparator.comparing(Posts::getAuthor));
             }else {
               posts.sort(Comparator.comparing(Posts::getAuthor).reversed());
@@ -77,8 +78,8 @@ public class StoreService implements IStoreService {
           }
           break;
         default:
-          if(orderBy != null && !orderBy.equals("")) {
-            if(!orderBy.equals("desc")){
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(!orderBy.equals(Constants.desc)){
               posts.sort(Comparator.comparingLong(Posts::getId));
             }else {
               posts.sort(Comparator.comparingLong(Posts::getId).reversed());
@@ -94,42 +95,42 @@ public class StoreService implements IStoreService {
   public List<Authors> getAllAuthors(String firstName, String lastName, String sortBy, String orderBy, String query) {
     List<Authors> authors =  repository.getAllAuthors();
 
-    if(query != null && !query.equals("")){
+    if(query != null && !query.equals(Constants.emptyString)){
       authors = authors.stream().filter(authorIt -> (authorIt.getFirstName() != null && authorIt.getFirstName()
         .contains(query)) || (authorIt.getLastName() != null && authorIt.getLastName().contains(query)))
         .collect(Collectors.toList());
     }
-    if(firstName != null && !firstName.equals("")){
+    if(firstName != null && !firstName.equals(Constants.emptyString)){
       authors = authors.stream().filter(authorIt -> (authorIt.getFirstName() != null && authorIt.getFirstName()
         .contains(firstName))).collect(Collectors.toList());
     }
-    if(lastName != null && !lastName.equals("")){
+    if(lastName != null && !lastName.equals(Constants.emptyString)){
       authors = authors.stream().filter(authorIt ->(authorIt.getLastName() != null && authorIt.getLastName()
         .contains(lastName))).collect(Collectors.toList());
     }
-    if(sortBy != null && !sortBy.equals("")){
+    if(sortBy != null && !sortBy.equals(Constants.emptyString)){
       switch (sortBy) {
-        case "posts" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(orderBy.equals("asc")){
+        case Constants.posts :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(orderBy.equals(Constants.asc)){
               authors.sort(Comparator.comparingInt(Authors::getPosts));
             }else {
               authors.sort(Comparator.comparingInt(Authors::getPosts).reversed());
             }
           }
           break;
-        case "firstName" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(!orderBy.equals("desc")){
+        case Constants.firstName :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(!orderBy.equals(Constants.desc)){
               authors.sort(Comparator.comparing(Authors::getFirstName));
             }else {
               authors.sort(Comparator.comparing(Authors::getFirstName).reversed());
             }
           }
 
-        case "lastName" :
-          if(orderBy != null && !orderBy.equals("")) {
-            if(!orderBy.equals("desc")){
+        case Constants.lastName :
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(!orderBy.equals(Constants.desc)){
               authors.sort(Comparator.comparing(Authors::getLastName));
             }else {
               authors.sort(Comparator.comparing(Authors::getLastName).reversed());
@@ -137,8 +138,8 @@ public class StoreService implements IStoreService {
           }
           break;
         default:
-          if(orderBy != null && !orderBy.equals("")) {
-            if(!orderBy.equals("desc")){
+          if(orderBy != null && !orderBy.equals(Constants.emptyString)) {
+            if(!orderBy.equals(Constants.desc)){
               authors.sort(Comparator.comparingLong(Authors::getId));
             } else {
               authors.sort(Comparator.comparingLong(Authors::getId).reversed());
@@ -177,9 +178,9 @@ public class StoreService implements IStoreService {
     String authorFirstName="";
     String authorLastName="";
     try {
-       authorFirstName = post.getAuthor().split(" ")[0];
+       authorFirstName = post.getAuthor().split(Constants.space)[0];
 
-      authorLastName = post.getAuthor().split(" ")[1];
+      authorLastName = post.getAuthor().split(Constants.space)[1];
       if(!checkAuthorExist(authorFirstName, authorLastName)){
         addAuthor(new Authors(authorFirstName, authorLastName));
       }
@@ -217,13 +218,13 @@ public class StoreService implements IStoreService {
   @Override
   public void deletePost(Long id) throws ResourceNotFoundException {
     if(!repository.deletePost(id))
-      throw new ResourceNotFoundException("Post not found!");
+      throw new ResourceNotFoundException(Constants.postNotFound);
   }
 
   @Override
   public void deleteAuthor(Long id) throws ResourceNotFoundException {
     if(!repository.deleteAuthor(id))
-      throw new ResourceNotFoundException("Author not found!");
+      throw new ResourceNotFoundException(Constants.authorNotFound);
   }
 
   @Override

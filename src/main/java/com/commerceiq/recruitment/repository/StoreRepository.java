@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.springframework.stereotype.Repository;
 
+import com.commerceiq.recruitment.constants.Constants;
 import com.commerceiq.recruitment.entities.Authors;
 import com.commerceiq.recruitment.entities.Posts;
 import com.commerceiq.recruitment.exceptions.ResourceNotFoundException;
@@ -56,7 +57,7 @@ public class StoreRepository {
     JSONObject obj = readJsonData();
     List<Posts> posts;
     try {
-      JSONArray postsArray = obj.getJSONArray("posts");
+      JSONArray postsArray = obj.getJSONArray(Constants.posts);
       if(postsArray == null)
         return new ArrayList<>();
       posts =  objectMapper.readValue(postsArray.toString(), new TypeReference<List<Posts>>() {});
@@ -71,7 +72,7 @@ public class StoreRepository {
     List<Authors> list;
     JSONObject obj = readJsonData();
     try {
-      JSONArray authorsArray = obj.getJSONArray("authors");
+      JSONArray authorsArray = obj.getJSONArray(Constants.authors);
       if(authorsArray == null)
         return new ArrayList<>();
       list =  objectMapper.readValue(authorsArray.toString(), new TypeReference<List<Authors>>() {});
@@ -88,7 +89,7 @@ public class StoreRepository {
         return post;
       }
     }
-    throw new ResourceNotFoundException("Post not found");
+    throw new ResourceNotFoundException(Constants.postNotFound);
   }
 
   public Authors getAuthor(long id) throws ResourceNotFoundException {
@@ -97,7 +98,7 @@ public class StoreRepository {
         return author;
       }
     }
-    throw new ResourceNotFoundException("Author not found");
+    throw new ResourceNotFoundException(Constants.authorNotFound);
   }
 
   public Authors addAuthor(Authors author) {
@@ -105,7 +106,7 @@ public class StoreRepository {
     author.setId((long) authors.size()*2);
     authors.add(author);
     JSONObject obj = readJsonData();
-    obj.put("authors", authors);
+    obj.put(Constants.authors, authors);
     writeJsonData(obj);
     return author;
   }
@@ -115,7 +116,7 @@ public class StoreRepository {
     post.setId((long) posts.size()*2);
     posts.add(post);
     JSONObject obj = readJsonData();
-    obj.put("posts", posts);
+    obj.put(Constants.posts, posts);
     writeJsonData(obj);
     return post;
   }
@@ -128,12 +129,12 @@ public class StoreRepository {
         posts.remove(postIt);
         posts.add(post);
         JSONObject obj = readJsonData();
-        obj.put("posts", posts);
+        obj.put(Constants.posts, posts);
         writeJsonData(obj);
         return post;
       }
     }
-    throw new ResourceNotFoundException("Post not found");
+    throw new ResourceNotFoundException(Constants.postNotFound);
   }
 
   public Authors editAuthor(Long id, Authors author) throws ResourceNotFoundException {
@@ -144,12 +145,12 @@ public class StoreRepository {
         authors.remove(authorIt);
         authors.add(author);
         JSONObject obj = readJsonData();
-        obj.put("authors", authors);
+        obj.put(Constants.authors, authors);
         writeJsonData(obj);
         return author;
       }
     }
-    throw new ResourceNotFoundException("Author not found");
+    throw new ResourceNotFoundException(Constants.authorNotFound);
   }
 
   public Posts patchPost(Long id, Map<String, ?> values) throws ResourceNotFoundException {
@@ -161,12 +162,12 @@ public class StoreRepository {
         posts.remove(postIt);
         posts.add(newPost);
         JSONObject obj = readJsonData();
-        obj.put("posts", posts);
+        obj.put(Constants.posts, posts);
         writeJsonData(obj);
         return newPost;
       }
     }
-    throw new ResourceNotFoundException("Post not found");
+    throw new ResourceNotFoundException(Constants.postNotFound);
   }
 
   public Authors patchAuthor(Long id, Map<String, ?> values) throws ResourceNotFoundException {
@@ -178,26 +179,26 @@ public class StoreRepository {
         authors.remove(authorIt);
         authors.add(newAuthor);
         JSONObject obj = readJsonData();
-        obj.put("authors", authors);
+        obj.put(Constants.authors, authors);
         writeJsonData(obj);
         return newAuthor;
       }
     }
-    throw new ResourceNotFoundException("Author not found");
+    throw new ResourceNotFoundException(Constants.authorNotFound);
   }
 
   private Posts replacePost (Posts post, Map<String, ?> values) throws NumberFormatException{
     for(String key: values.keySet()){
       switch(key) {
-        case "title" : post.setTitle(String.valueOf(values.get(key)));
+        case Constants.title : post.setTitle(String.valueOf(values.get(key)));
         break;
-        case "author" : post.setAuthor(String.valueOf(values.get(key)));
+        case Constants.author : post.setAuthor(String.valueOf(values.get(key)));
         break;
-        case "views" : post.setViews(Integer.parseInt(String.valueOf(values.get(key))));
+        case Constants.views : post.setViews(Integer.parseInt(String.valueOf(values.get(key))));
         break;
-        case "reviews" : post.setReviews(Integer.parseInt(String.valueOf(values.get(key))));
+        case Constants.reviews : post.setReviews(Integer.parseInt(String.valueOf(values.get(key))));
         break;
-        case "id" : break;
+        case Constants.id : break;
         default:
             post.getAdditionalInformation().put(key, String.valueOf(values.get(key)));
       }
@@ -208,13 +209,13 @@ public class StoreRepository {
   private Authors replaceAuthor (Authors author, Map<String, ?> values) throws NumberFormatException{
     for(String key: values.keySet()){
       switch(key) {
-        case "firstName" : author.setFirstName(String.valueOf(values.get(key)));
+        case Constants.firstName : author.setFirstName(String.valueOf(values.get(key)));
           break;
-        case "lastName" : author.setLastName(String.valueOf(values.get(key)));
+        case Constants.lastName : author.setLastName(String.valueOf(values.get(key)));
           break;
-        case "posts" : author.setPosts(Integer.parseInt(String.valueOf(values.get(key))));
+        case Constants.posts : author.setPosts(Integer.parseInt(String.valueOf(values.get(key))));
           break;
-        case "id" : break;
+        case Constants.id : break;
         default:
           author.getAdditionalInformation().put(key, String.valueOf(values.get(key)));
       }
@@ -230,7 +231,7 @@ public class StoreRepository {
       if(Objects.equals(it.getId(), id)){
         posts.remove(it);
         JSONObject obj = readJsonData();
-        obj.put("posts", posts);
+        obj.put(Constants.posts, posts);
         writeJsonData(obj);
         return true;
       }
@@ -244,7 +245,7 @@ public class StoreRepository {
       if(it.getId().equals(id)){
         authors.remove(it);
         JSONObject obj = readJsonData();
-        obj.put("authors", authors);
+        obj.put(Constants.authors, authors);
         writeJsonData(obj);
         return true;
       }
