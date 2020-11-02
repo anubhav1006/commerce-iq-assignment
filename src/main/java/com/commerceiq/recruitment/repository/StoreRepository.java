@@ -103,7 +103,7 @@ public class StoreRepository {
 
   public Authors addAuthor(Authors author) {
     List<Authors> authors = getAllAuthors();
-    author.setId((long) authors.size()*2);
+    author.setId((long) authors.size()+1);
     authors.add(author);
     JSONObject obj = readJsonData();
     obj.put(Constants.authors, authors);
@@ -113,7 +113,7 @@ public class StoreRepository {
 
   public Posts addPost(Posts post) {
     List<Posts> posts = getAllPosts();
-    post.setId((long) posts.size()*2);
+    post.setId((long) posts.size()+1);
     posts.add(post);
     JSONObject obj = readJsonData();
     obj.put(Constants.posts, posts);
